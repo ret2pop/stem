@@ -177,9 +177,15 @@ value_t *parse_num(parser_t *p) {
   value_t *retv;
   string_t *s = init_string(NULL);
   bool is_float = false;
+  int dot_count = 0;
   while (isdigit(p->c) || p->c == '.') {
-    if (p->c == '.')
+    if (p->c == '.') {
+      dot_count++;
+      if (dot_count > 1) {
+        parser_error(p);
+      }
       is_float = true;
+    }
     string_append(s, p->c);
     parser_move(p);
   }
