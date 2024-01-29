@@ -10,10 +10,11 @@ about memory allocation while the implementation remains extremely simple.
 # Installation
 In the terminal:
 ``` sh
-git clone https://github.com/ret2pop/stem
+git clone --recurse-submodules https://github.com/ret2pop/stem
 cd stem/
 make
 sudo make install
+
 ```
 To generate the html documentation, one must first install `doxygen` as an optional dependency.
 If you are on a BSD or MacOS, you must use `gmake`. Also, you obviously need `git` to clone this

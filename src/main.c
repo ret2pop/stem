@@ -1,5 +1,6 @@
 #include <builtins.h>
 #include <dlfcn.h>
+#include <nativecomp.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,6 +14,8 @@ extern parser_t *PARSER;
 extern array_t *EVAL_STACK;
 extern ht_t *OBJ_TABLE;
 extern ht_t *FLIT;
+extern ht_t *RUNTIME_TABLE;
+extern string_t *CODE;
 
 /*! prints usage then exits */
 void usage() {
@@ -36,6 +39,8 @@ void global_free() {
   array_free(STACK);
   free(PARSER);
   array_free(EVAL_STACK);
+  ht_free(RUNTIME_TABLE);
+  string_free(CODE);
 }
 
 /*! handles SIGINT signal; frees memory before exit */
@@ -79,17 +84,27 @@ int main(int argc, char **argv) {
   EVAL_STACK = init_array(10);
   FLIT = init_ht(500);
   OBJ_TABLE = init_ht(500);
+  RUNTIME_TABLE = init_ht(500);
+  CODE = init_string("");
 
   add_funcs();
+  add_runtime_funcs();
   signal(SIGINT, sigint_handler);
 
   /* parse and eval loop */
+  add_preamble();
   while (1) {
     v = parser_get_next(PARSER);
     if (v == NULL)
       break;
-    eval(v);
+    if (PARSER->comp)
+      eval(v);
+    else
+      gen(v);
   }
+
+  add_postamble();
+  printf("%s\n", CODE->value);
 
   /* Free all global variables */
   global_free();

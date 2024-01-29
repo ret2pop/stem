@@ -1394,6 +1394,10 @@ void uncurry(value_t *v) {
   array_append(STACK, retval);
 }
 
+void comp(value_t *v) { PARSER->comp = true; }
+
+void runtime(value_t *v) { PARSER->comp = false; }
+
 void add_objs() {}
 
 void add_funcs() {

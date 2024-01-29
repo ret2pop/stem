@@ -56,6 +56,8 @@ typedef struct PARSER_STRUCT {
   int i;
   /*! @brief The current character */
   char c;
+  /*! @brief flag toggles compile-time/runtime parsing and evaluation */
+  bool comp;
 } parser_t;
 
 /*! @brief This structure is to be used in singly linked lists that hold
@@ -237,4 +239,5 @@ bool eval_ht(value_t *v);
 /*! Evaluates a value returned by the parser. */
 void eval(value_t *v);
 
+void gen(value_t *v);
 #endif // PARSER_H_

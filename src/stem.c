@@ -15,6 +15,8 @@ parser_t *PARSER;
 
 ht_t *FLIT;
 ht_t *OBJ_TABLE;
+ht_t *RUNTIME_TABLE;
+string_t *CODE;
 
 void func_free(void *f) {}
 
@@ -166,6 +168,7 @@ parser_t *init_parser(char *source) {
   p->i = 0;
   p->source = source;
   p->c = source[0];
+  p->comp = true;
   return p;
 }
 
@@ -173,6 +176,7 @@ void parser_reset(parser_t *p, char *source) {
   p->source = source;
   p->i = 0;
   p->c = source[0];
+  p->comp = true;
 }
 
 parser_t *parser_pp(char *s) {
@@ -532,5 +536,92 @@ void eval(value_t *v) {
         }
       }
     }
+  }
+}
+
+value_t *expandword(value_t *v) {
+  value_t *newval;
+  value_t *newquote;
+
+  /* expands the words and puts them in the same quote */
+  for (int i = 0; i < v->quote->size; i++) {
+    if (v->quote->items[i]->type == VWORD) {
+      newval = ht_get(WORD_TABLE, v->quote->items[i]->str_word);
+      if (newval) {
+        newval = value_copy(newval);
+        newval = expandword(newval);
+        newval->escaped = true;
+        v->quote->items[i] = newval;
+      }
+    }
+  }
+
+  /* then flattens the quote in a new array */
+  array_t *newarr = init_array(10);
+  for (int i = 0; i < v->quote->size; i++) {
+    if (v->quote->items[i]->type == VQUOTE && v->quote->items[i]->escaped) {
+      for (int j = 0; j < v->quote->items[i]->quote->size; j++) {
+        array_append(newarr, v->quote->items[i]->quote->items[j]);
+      }
+    } else {
+      array_append(newarr, v->quote->items[i]);
+    }
+  }
+
+  newquote = init_value(VQUOTE);
+  newquote->quote = newarr;
+  free(v->quote->items);
+  free(v->quote);
+  free(v);
+  return newquote;
+}
+
+void stackgen(value_t *v) {
+  switch (v->type) {}
+}
+
+/* codegen */
+void gen(value_t *v) {
+  string_t *str;
+  string_t *cur;
+  value_t *warray;
+  value_t *val;
+  switch (v->type) {
+  case VWORD:
+    if (strcmp(v->str_word->value, "*c") == 0) {
+      PARSER->comp = true;
+      break;
+    }
+    if (v->escaped) {
+      stackgen(v);
+      break;
+    } else {
+      warray = init_value(VQUOTE);
+      warray->quote = init_array(10);
+      array_append(warray->quote, v);
+      warray = expandword(warray);
+      for (int i = 0; i < warray->quote->size; i++) {
+        val = warray->quote->items[i];
+        switch (v->type) {
+        case VWORD:
+          str = warray->quote->items[i]->str_word;
+          cur = ht_get(RUNTIME_TABLE, str);
+          if (cur == NULL) {
+            stackgen(v);
+            break;
+          } else {
+            string_concat(CODE, cur);
+          }
+          break;
+        default:
+          stackgen(v);
+          break;
+        }
+      }
+      value_free(warray);
+    }
+  default:
+    stackgen(v);
+    break;
   }
 }
