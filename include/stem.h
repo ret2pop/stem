@@ -239,5 +239,6 @@ bool eval_ht(value_t *v);
 /*! Evaluates a value returned by the parser. */
 void eval(value_t *v);
 
+/*! Generates code to global CODE string */
 void gen(value_t *v);
 #endif // PARSER_H_

@@ -23,9 +23,12 @@ string_t *string_copy(string_t *s);
 /*! Concatenates a string_t type and a char * type */
 void string_concat(string_t *s1, string_t *s2);
 
+/*! Concatenates carr to s */
+void string_strcat(string_t *s, char *carr);
+
 /*! Appends single characters */
 void string_append(string_t *s, char c);
 
 /*! Frees space for string */
-void string_free(string_t *s);
+void string_free(void *s);
 #endif

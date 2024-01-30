@@ -49,6 +49,12 @@ void string_concat(string_t *s1, string_t *s2) {
   }
 }
 
+void string_strcat(string_t *s1, char *carr) {
+  for (int i = 0; i < strlen(carr); i++) {
+    string_append(s1, carr[i]);
+  }
+}
+
 void string_append(string_t *s, char c) {
   char str[2] = {c, '\0'};
   int oldsize = s->bufsize;
@@ -60,7 +66,8 @@ void string_append(string_t *s, char c) {
   strcat(s->value, str);
 }
 
-void string_free(string_t *s) {
-  free(s->value);
-  free(s);
+void string_free(void *s) {
+  string_t *a = (string_t *)s;
+  free(a->value);
+  free(a);
 }

@@ -39,7 +39,7 @@ void global_free() {
   array_free(STACK);
   free(PARSER);
   array_free(EVAL_STACK);
-  ht_free(RUNTIME_TABLE);
+  ht_free(RUNTIME_TABLE, string_free);
   string_free(CODE);
 }
 
