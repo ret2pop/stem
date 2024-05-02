@@ -18,6 +18,9 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT) Makefile
 	@mkdir -p $(BUILDDIR)
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $< -save-temps -O3
 
+compile_flags.txt: Makefile
+	printf "%s\n" $(CFLAGS) $(INC) >$@
+
 clean:
 	@echo " Cleaning..."; 
 	@echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET)
