@@ -5,7 +5,7 @@ TARGET := stem
 SRCEXT := c
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS :=
+CFLAGS := -MMD -MP
 LIB := -L lib -lm
 INC := -I include
 
@@ -13,7 +13,7 @@ $(TARGET): $(OBJECTS)
 	@echo " Linking..."
 	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB) -O3
 
-$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
+$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT) Makefile
 	@echo " Building..."
 	@mkdir -p $(BUILDDIR)
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $< -save-temps -O3
@@ -33,3 +33,5 @@ doc:
 site:
 	doxygen
 	rsync -uvrP --delete-after "html/" root@nullring.xyz:/var/www/stemdoc
+
+-include $(OBJECTS:.o=.d)
