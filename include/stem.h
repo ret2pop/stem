@@ -48,7 +48,7 @@ struct VALUE_STRUCT {
 
 /*! @brief Parser implementation directly parses without lexer */
 /*! the parser data structure parses a string of valid stem code and
- * returns a value until it reaches EOF or end of string. */
+ * returns a value until it reaches end of string. */
 typedef struct PARSER_STRUCT {
   /*! @brief The string that contains valid stem code. */
   char *source;
@@ -181,7 +181,7 @@ value_t *parse_word(parser_t *p);
 /*! Error in parsing strings can occur if wrong escape code. */
 void parser_error(parser_t *p);
 
-/*! Gets the next value_t from the string, returns NULL if EOF. */
+/*! Gets the next value_t from the string, returns NULL if end of string. */
 value_t *parser_get_next(parser_t *p);
 
 /*! Allocates memory for new node struct. */
