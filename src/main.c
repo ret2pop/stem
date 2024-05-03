@@ -49,7 +49,7 @@ void sigint_handler(int signum) {
 int main(int argc, char **argv) {
   value_t *v;
   size_t len = 0;
-  char *buf = "";
+  char *buf = NULL;
 
   /* Parsing arguments */
   if (argc < 2) {

@@ -540,7 +540,7 @@ void stemfread(value_t *v) {
     eval_error("EMPTY STACK");
     return;
   }
-  char *val = "";
+  char *val = NULL;
   size_t len = 0;
   FILE *fp = fopen(v1->str_word->value, "rb");
   if (!fp) {
@@ -1341,7 +1341,7 @@ void include(value_t *v) {
     eval_error("EMPTY STACK");
     return;
   }
-  char *val = "";
+  char *val = NULL;
   size_t len = 0;
   string_t *strval = init_string("/usr/local/share/stem/stemlib/");
   string_concat(strval, v1->str_word);
